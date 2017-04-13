@@ -9,7 +9,7 @@ software for the Coretec Tiny 4wd
    
 3) download TinyPirate.py form here by entering at the command line the following
 
-    wget https://raw.githubusercontent.com/Coretec-Robotics/Tiny_4wd/TinyPirate.py
+    wget https://raw.githubusercontent.com/Coretec-Robotics/Tiny_4wd/master/TinyPirate.py
    
 4) it's best to restart your Raspberry Pi before running TinyPirate.py
 
