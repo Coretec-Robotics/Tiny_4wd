@@ -1,5 +1,5 @@
 # Tiny_4wd
-software for the Coretec Tiny 4wd
+software for the Coretec Tiny 4wd and setup instructions
 
 1) install the Pimoroni Explorer Python library, instructions can be found on the Explorer page on the Pimoroni website https://shop.pimoroni.com/products/explorer-phat
 
