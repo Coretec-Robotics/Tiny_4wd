@@ -13,7 +13,7 @@ software for the Coretec Tiny 4wd and setup instructions
    
 4) it's best to restart your Raspberry Pi before running TinyPirate.py
 
-5) after restart your Pi enter the following to run TinyPirate.py
+5) after restarting your Pi enter the following to run TinyPirate.py
 
    sudo python ./TinyPirate.py
    
