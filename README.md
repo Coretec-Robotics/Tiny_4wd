@@ -1,6 +1,7 @@
 # Tiny_4wd
 software for the Coretec Tiny 4wd and setup instructions
 
+
 Manual control with a game controller like the Rock Candy
 
 1) install the Pimoroni Explorer Python library, instructions can be found on the Explorer page on the Pimoroni website https://shop.pimoroni.com/products/explorer-phat
@@ -19,6 +20,7 @@ Manual control with a game controller like the Rock Candy
 
    sudo python ./TinyPirate.py
    
+
 Manual control with the BlueDot Android app
 
 if you want to install BlueDotPirate.py instead of BlueDotPirateMixed.py replace BlueDotPirateMixed.py with BlueDotPirate.py
