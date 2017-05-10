@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: Latin-1
 
-# Control a Tiny4WD using a bluetooth keyboard or a joypad thet pretends to be a bluetooth keyboard e.g. http://www.8bitdo.com/zero/
+# Control a Tiny4WD using a bluetooth keyboard or a joypad that pretends to be a bluetooth keyboard e.g. http://www.8bitdo.com/zero/
 
 # wayne@thebubbleworks.com
 
@@ -15,11 +15,11 @@
 # sudo pip3 install explorerhat
 
 
-# Note: This uses the first keyboard found, so to be sure only have your bluetooth keyboard / 8bitdo Zero connected.
+# Note: This uses the first keyboard found, so to be sure to have only a single bluetooth keyboard or 8bitdo Zero connected.
+#       e.g. disconnect any USB keyboard, if you needed.
 
-# if you see the following error then there is no keyboard connected at all:
+# if you see the following error then there is liekly no keyboard connected at all:
 
-# keyboard = devices[0]
 #       IndexError: list index out of range
 
 
@@ -28,7 +28,7 @@ from evdev import InputDevice, list_devices, ecodes
 from explorerhat import motor
 
 
-# Depend on which way round your wires are to on motor pair one or both of these may need to be a negative number
+# Depends on which way round your wires are to the motors, one or both of these may need to be a negative number
 LEFT_MOTOR_MAX_POWER_FWD  = 100
 RIGHT_MOTOR_MAX_POWER_FWD = 100
 
@@ -37,7 +37,7 @@ left_motor = motor.one
 right_motor = motor.two
 
 
-def get_first_keyboard():
+def get_keyboard(keyboard_index = 0):
 
     # Get the list of available input devices
     devices = [InputDevice(device) for device in list_devices()]
@@ -54,9 +54,7 @@ def get_first_keyboard():
         if must_have.issubset(keys)
         and must_not_have.isdisjoint(keys)
     ]
-    # Pick the first keyboard
-
-    return devices[0]
+    return devices[keyboard_index]
 
 
 
@@ -101,7 +99,7 @@ keypress_actions = {
 
 try:
     print('Press CTRL+C to quit')
-    keyboard = get_first_keyboard()
+    keyboard = get_keyboard()
 
     for event in keyboard.read_loop():
         if event.type == ecodes.EV_KEY and event.code in keypress_actions:
