@@ -71,7 +71,7 @@ from explorerhat import motor
 
 # You may have to re-run the connect command if it fails the first few times.
 
-# If the desktop and bluetooth manger is running you may automatically see a popup window asking to pair, say yes.
+# If the desktop and bluetooth manager is running you may automatically see a popup window asking to pair, say yes.
 
 
 # --------------------------------------------------------------------------------------------------------
