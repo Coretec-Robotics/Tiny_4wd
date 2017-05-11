@@ -5,25 +5,53 @@
 
 # wayne@thebubbleworks.com
 
-# evdev keyboard handling from https://gpiozero.readthedocs.io/en/stable/recipes.html#keyboard-controlled-robot
+# evdev keyboard handling based on example from https://gpiozero.readthedocs.io/en/stable/recipes.html#keyboard-controlled-robot
 
 # First, pair a bluetooth keyboard (or gamepad that is really a keyboard, such as the Z8BitDo ero) on the Pi's desktop first.
 
+# Alternatively, to pair a bluetooth keyboard using a Terminal or SSH, the steps are:
 
-# You may need to install these  Python dependencies:
+# -- Run:
+#
+# bluetoothctl
+
+# -- This wil start a 'bluetooth command shell', enter these commands:
+
+# power on
+# agent on
+# scan on
+
+# -- You should eventually, be patient, see something like:   [NEW] Device 97:13:70:C5:AA:BB Bluetooth  Keyboard
+# -- The value 97:13:70:C5:AA:BB will be different and use your value in place of <MACADDRESS> below:
+
+# connect <MACADDRESS>
+# trust  <MACADDRESS>
+# pair <MACADDRESS>
+
+# -- You should see something like:  [agent] PIN code: 967776
+# -- type the code you have on the Bluetooth keyboard and press RETURN and then back in 'bluetooth command shell'
+
+# connect <MACADDRESS>
+
+# -- You might have to reenter the connect, trust and pair commands and you may have to start from the begining
+# -- To exit type:
+
+# exit
+
+
+
+# You may need to install these Python dependencies:
 # sudo pip3 install evdev
 # sudo pip3 install explorerhat
 
 
-# Note: This uses the first keyboard found, so to be sure to have only a single bluetooth keyboard or 8bitdo Zero connected.
-#       e.g. disconnect any USB keyboard, if you needed.
-
-# if you see the following error then there is liekly no keyboard connected at all:
-
-#       IndexError: list index out of range
-
+# Note: This script uses the first keyboard found, which could be USB or Bluetooth.
+# So either only have the (bluetooth) keyboard you want connected or adjust KEYBOARD_INDEX, e.g. 1, 2, 3 ...
+KEYBOARD_INDEX = 0
 
 # Load library functions we want
+from sys import exit
+import atexit
 from evdev import InputDevice, list_devices, ecodes
 from explorerhat import motor
 
@@ -54,7 +82,11 @@ def get_keyboard(keyboard_index = 0):
         if must_have.issubset(keys)
         and must_not_have.isdisjoint(keys)
     ]
-    return devices[keyboard_index]
+    device = None
+    if len(devices) > 0:
+        device = devices[keyboard_index]
+
+    return device
 
 
 
@@ -82,6 +114,18 @@ def stop():
     right_motor.speed(0)
 
 
+def end():
+    exit(0)
+
+
+# Run this whenever the script exits
+@atexit.register
+def cleanup():
+    # disable all motors
+    motor.stop()
+    print("Bye")
+
+
 keypress_actions = {
     # Arrow keys:
     ecodes.KEY_UP: forward,
@@ -94,24 +138,26 @@ keypress_actions = {
     ecodes.KEY_D: backward,
     ecodes.KEY_E: left,
     ecodes.KEY_F: right,
+
+    # Other commands
+    ecodes.KEY_ESC: end,
 }
 
 
 try:
-    print('Press CTRL+C to quit')
-    keyboard = get_keyboard()
+    print('Press ESCAPE or CTRL+C to quit')
+    keyboard = get_keyboard(KEYBOARD_INDEX)
 
-    for event in keyboard.read_loop():
-        if event.type == ecodes.EV_KEY and event.code in keypress_actions:
-            if event.value == 1:  # key down
-                keypress_actions[event.code]()
-            if event.value == 0:  # key up
-                stop()
+    if keyboard:
+        for event in keyboard.read_loop():
+            if event.type == ecodes.EV_KEY and event.code in keypress_actions:
+                if event.value == 1:  # key down
+                    keypress_actions[event.code]()
+                if event.value == 0:  # key up
+                    stop()
+    else:
+        print("No keyboard found!")
 
 except KeyboardInterrupt:
-    # CTRL+C exit, disable all motors
+    # CTRL+C exit
     print("stopping...")
-
-motor.stop()
-print("Bye")
-
