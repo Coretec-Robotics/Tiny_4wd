@@ -1,15 +1,40 @@
 #!/usr/bin/env python
 # coding: Latin-1
+# Load library functions we want
+from sys import exit
+import atexit
+from evdev import InputDevice, list_devices, ecodes
+from explorerhat import motor
 
-# Control a Tiny4WD using a bluetooth keyboard or a joypad that pretends to be a bluetooth keyboard e.g. http://www.8bitdo.com/zero/
+# --------------------------------------------------------------------------------------------------------
+# Info
 
-# wayne@thebubbleworks.com
+# Purpose: Control a Tiny4WD using a Bluetooth keyboard or a joypad pretending to be a Bluetooth keyboard
+# Author : Wayne Keenan - wayne@thebubbleworks.com
 
-# evdev keyboard handling based on example from https://gpiozero.readthedocs.io/en/stable/recipes.html#keyboard-controlled-robot
+# ------------------------------------------------------------------------------------------
+# Python Libraries
 
-# First, pair a bluetooth keyboard (or gamepad that is really a keyboard, such as the Z8BitDo ero) on the Pi's desktop first.
+# You may need to install these Python dependencies:
 
-# Alternatively, to pair a bluetooth keyboard using a Terminal or SSH, the steps are:
+# sudo pip3 install evdev
+# sudo pip3 install explorerhat
+
+# --------------------------------------------------------------------------------------------------------
+# Notes:
+
+# A Joypad that can pretend to be a keyboard: http://www.8bitdo.com/zero/
+
+# The evdev keyboard detection and handling based on an example from gpiozero:
+# https://gpiozero.readthedocs.io/en/stable/recipes.html#keyboard-controlled-robot
+
+
+# --------------------------------------------------------------------------------------------------------
+# Bluetooth Keyboard Setup Instructions
+
+# Pair a Bluetooth keyboard using the default Bluetooth app on the Pi's desktop, it's fairly straight forward.
+
+# Alternatively, to pair a bluetooth keyboard using a Terminal or via SSH, the steps are:
 
 # -- Run:
 #
@@ -39,30 +64,43 @@
 # exit
 
 
+# To reconnect in the future all you need to do is :
 
-# You may need to install these Python dependencies:
-# sudo pip3 install evdev
-# sudo pip3 install explorerhat
+# bluetoothctl
+# connect <MACADDRESS>
 
+# You may have to re-run the connect command if it fails the first few times.
+
+
+# --------------------------------------------------------------------------------------------------------
+# Settings
 
 # Note: This script uses the first keyboard found, which could be USB or Bluetooth.
 # So either only have the (bluetooth) keyboard you want connected or adjust KEYBOARD_INDEX, e.g. 1, 2, 3 ...
 KEYBOARD_INDEX = 0
 
-# Load library functions we want
-from sys import exit
-import atexit
-from evdev import InputDevice, list_devices, ecodes
-from explorerhat import motor
+# The max speed setting for the motors.
+MAX_POWER=100
 
-
-# Depends on which way round your wires are to the motors, one or both of these may need to be a negative number
-LEFT_MOTOR_MAX_POWER_FWD  = 100
-RIGHT_MOTOR_MAX_POWER_FWD = 100
+# Depending on which way round the positive and negative wires are connected to the motors,
+# one or both of these values may need to be negative, e.g. -MAX_POWER
+LEFT_MOTOR_MAX_POWER_FWD  = MAX_POWER       # The top speed that makes the left motors turn in the forward direction
+RIGHT_MOTOR_MAX_POWER_FWD = MAX_POWER       # The top speed that makes the right motors turn in the forward direction
 
 # Depending on which side of your robot motors are mounted these might need swapping
-left_motor = motor.one
-right_motor = motor.two
+left_motor = motor.one                      # The explorer pHAT 'motor.one' is connected to the robots left hand motors
+right_motor = motor.two                     # The explorer pHAT 'motor.two' is connected to the robots right hand motors
+
+
+# --------------------------------------------------------------------------------------------------------
+# Utilities
+
+# Run this whenever the script exits
+@atexit.register
+def cleanup():
+    # disable all motors
+    motor.stop()
+    print("Bye")
 
 
 def get_keyboard(keyboard_index = 0):
@@ -89,8 +127,12 @@ def get_keyboard(keyboard_index = 0):
     return device
 
 
-
+# --------------------------------------------------------------------------------------------------------
 # Motor Control
+
+# You shouldn't need to change these, but if the robot is not going in the direction you expect
+# please see the settings section above and adjust the LEFT_MOTOR_MAX_POWER_FWD, RIGHT_MOTOR_MAX_POWER_FWD
+# left_motor & right_motor settings there.
 
 def forward():
     left_motor.speed(LEFT_MOTOR_MAX_POWER_FWD)
@@ -117,14 +159,8 @@ def stop():
 def end():
     exit(0)
 
-
-# Run this whenever the script exits
-@atexit.register
-def cleanup():
-    # disable all motors
-    motor.stop()
-    print("Bye")
-
+# --------------------------------------------------------------------------------------------------------
+# Keyboard Actions
 
 keypress_actions = {
     # Arrow keys:
@@ -143,6 +179,8 @@ keypress_actions = {
     ecodes.KEY_ESC: end,
 }
 
+# --------------------------------------------------------------------------------------------------------
+# Main
 
 try:
     print('Press ESCAPE or CTRL+C to quit')
