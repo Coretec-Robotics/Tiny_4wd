@@ -71,6 +71,8 @@ from explorerhat import motor
 
 # You may have to re-run the connect command if it fails the first few times.
 
+# If the desktop and bluetooth manger is running you may automatically see a popup window asking to pair, say yes.
+
 
 # --------------------------------------------------------------------------------------------------------
 # Settings
@@ -80,16 +82,16 @@ from explorerhat import motor
 KEYBOARD_INDEX = 0
 
 # The max speed setting for the motors.
-MAX_POWER=100
+MAX_SPEED=100
 
 # Depending on which way round the positive and negative wires are connected to the motors,
 # one or both of these values may need to be negative, e.g. -MAX_POWER
-LEFT_MOTOR_MAX_POWER_FWD  = MAX_POWER       # The top speed that makes the left motors turn in the forward direction
-RIGHT_MOTOR_MAX_POWER_FWD = MAX_POWER       # The top speed that makes the right motors turn in the forward direction
+LEFT_MOTOR_MAX_SPEED_FWD  = MAX_SPEED       # The top speed that makes the left motors turn in the forward direction
+RIGHT_MOTOR_MAX_SPEED_FWD = MAX_SPEED       # The top speed that makes the right motors turn in the forward direction
 
 # Depending on which side of your robot motors are mounted these might need swapping
-left_motor = motor.one                      # The explorer pHAT 'motor.one' is connected to the robots left hand motors
-right_motor = motor.two                     # The explorer pHAT 'motor.two' is connected to the robots right hand motors
+left_motor = motor.two                      # The explorer pHAT 'motor.one' is connected to the robots left hand motors
+right_motor = motor.one                     # The explorer pHAT 'motor.two' is connected to the robots right hand motors
 
 
 # --------------------------------------------------------------------------------------------------------
@@ -135,20 +137,20 @@ def get_keyboard(keyboard_index = 0):
 # left_motor & right_motor settings there.
 
 def forward():
-    left_motor.speed(LEFT_MOTOR_MAX_POWER_FWD)
-    right_motor.speed(RIGHT_MOTOR_MAX_POWER_FWD)
+    left_motor.speed(LEFT_MOTOR_MAX_SPEED_FWD)
+    right_motor.speed(RIGHT_MOTOR_MAX_SPEED_FWD)
 
 def backward():
-    left_motor.speed(-LEFT_MOTOR_MAX_POWER_FWD)
-    right_motor.speed(-RIGHT_MOTOR_MAX_POWER_FWD)
+    left_motor.speed(-LEFT_MOTOR_MAX_SPEED_FWD)
+    right_motor.speed(-RIGHT_MOTOR_MAX_SPEED_FWD)
 
 def left():
-    left_motor.speed(-LEFT_MOTOR_MAX_POWER_FWD)
-    right_motor.speed( RIGHT_MOTOR_MAX_POWER_FWD)
+    left_motor.speed(-LEFT_MOTOR_MAX_SPEED_FWD)
+    right_motor.speed(RIGHT_MOTOR_MAX_SPEED_FWD)
 
 def right():
-    left_motor.speed( LEFT_MOTOR_MAX_POWER_FWD)
-    right_motor.speed(-RIGHT_MOTOR_MAX_POWER_FWD)
+    left_motor.speed(LEFT_MOTOR_MAX_SPEED_FWD)
+    right_motor.speed(-RIGHT_MOTOR_MAX_SPEED_FWD)
 
 
 def stop():
